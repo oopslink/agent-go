@@ -1,0 +1,40 @@
+{
+    "knownedge_bases": [
+        {
+            "name": "knowledge_about_astronomy",
+            "domain": "Astronomy",
+            "description": "Facts about celestial bodies, space phenomena, and the universe",
+            "items": [
+              "The sky appears blue because Earth's atmosphere scatters shorter blue wavelengths of sunlight more than longer red wavelengths",
+              "A day on Venus is longer than its year - Venus takes 243 Earth days to rotate once but only 225 Earth days to orbit the Sun",
+              "Neutron stars are so dense that a teaspoon of neutron star material would weigh about 6 billion tons on Earth",
+              "The Milky Way galaxy is on a collision course with the Andromeda galaxy, expected to merge in about 4.5 billion years",
+              "Black holes don't actually suck things in - objects must cross the event horizon to be trapped by the immense gravitational field"
+            ]
+          },
+          {
+            "name": "knowledge_about_biology",
+            "domain": "Biology",
+            "description": "Facts about living organisms, evolution, and life processes",
+            "items": [
+              "Octopuses have three hearts - two pump blood to the gills while the third pumps blood to the rest of the body",
+              "Humans share about 60% of their DNA with bananas because all life forms evolved from common ancestral organisms",
+              "Tardigrades can survive in outer space because they can enter cryptobiosis, a state where their metabolism nearly stops",
+              "Trees communicate through underground fungal networks called mycorrhizae, sharing nutrients and warning signals",
+              "The human brain uses about 20% of the body's total energy despite being only 2% of body weight"
+            ]
+          },
+          {
+            "name": "knowledge_about_history",
+            "domain": "History",
+            "description": "Significant events, civilizations, and developments throughout human history",
+            "items": [
+              "The Library of Alexandria declined gradually over centuries because of reduced funding, political instability, and changing educational priorities, not a single fire",
+              "The Great Wall of China is not visible from space with the naked eye because it's too narrow and blends with the surrounding landscape",
+              "Vikings reached North America 500 years before Columbus because archaeological evidence at L'Anse aux Meadows confirms Norse settlement around 1000 CE",
+              "The Renaissance began in Italy because wealthy merchant families like the Medici patronized arts and learning, and Italian city-states had contact with Byzantine scholars",
+              "The printing press revolutionized society because it made books affordable and widely available, spreading literacy and ideas rapidly"
+            ]
+          }
+    ]
+}

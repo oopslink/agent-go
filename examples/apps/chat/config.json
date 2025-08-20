@@ -1,0 +1,31 @@
+{
+  "provider": "openai",
+  "api_key": "your-openai-api-key-here",
+  "base_url": "https://api.openai.com/v1",
+  "model_name": "gpt-4o-mini",
+  "openai_compatibility": false,
+  "system_prompt": "You are a helpful AI assistant with access to a knowledge base containing information about Astronomy, Biology, Physics, and History. You can answer questions, provide information, and assist with tasks. When users ask questions that might be answered with knowledge from the available domains, use the knowledge_retriever tool to find relevant information. Please use Markdown format when appropriate.",
+  "runtime_dir": "./runtime",
+  
+  "vector_db": {
+    "type": "milvus",
+    "endpoint": "localhost:19530",
+    "username": "",
+    "password": "",
+    "timeout": 15
+  },
+  
+  "embedder": {
+    "type": "llm",
+    "provider": "openai",
+    "api_key": "your-openai-api-key-here",
+    "base_url": "https://api.openai.com/v1",
+    "model": "text-embedding-3-small"
+  },
+  
+  "tool_suppression": {
+    "enabled": true,
+    "max_count": 3,
+    "cooldown_rounds": 1
+  }
+} 
