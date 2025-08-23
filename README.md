@@ -9,7 +9,7 @@
 
 
 [![Multi-Provider](https://img.shields.io/badge/LLMs-3%20-orange)](README.md#configuration)
-[![Version](https://img.shields.io/badge/Version-v0.1.0-blue)](https://github.com/bytedance/WebTranslator)
+[![Version](https://img.shields.io/badge/Version-v1.0.0-blue)](https://github.com/oopslink/agent-go)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green)](LICENSE)
 [![Code+AI](https://img.shields.io/badge/Code+AI-60%25-purple)](README.md#overview)
 [![Build](https://github.com/oopslink/agent-go/actions/workflows/build_on_push.yml/badge.svg)](https://github.com/oopslink/agent-go/actions/workflows/build_on_push.yml)
