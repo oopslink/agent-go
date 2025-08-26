@@ -89,7 +89,7 @@ func TestConversation_Run(t *testing.T) {
 	ctx := context.Background()
 	testMessage := "Hello, how are you?"
 
-	err := conversation.Run(ctx, testMessage, handler)
+	err := conversation.Ask(ctx, testMessage, handler)
 	if err != nil {
 		t.Fatalf("Expected no error, got: %v", err)
 	}
@@ -142,7 +142,7 @@ func TestConversation_ContextCancellation(t *testing.T) {
 	}()
 
 	// Run conversation
-	err := conversation.Run(ctx, "Test message", handler)
+	err := conversation.Ask(ctx, "Test message", handler)
 	
 	// Should return context cancellation error
 	if err == nil {

@@ -31,11 +31,12 @@ func (h *SimpleConversationHandler) OnResponse(ctx *chat.ConversationContext, ag
 		fmt.Print(content.String())
 	}
 
-	if agentResponse.ToolCall != nil {
-		fmt.Printf("\n🔧 Tool Call: %s\n", agentResponse.ToolCall.Name)
+	if len(agentResponse.ToolCalls) > 0 {
+		for _, toolCall := range agentResponse.ToolCalls {
+			fmt.Printf("\n🔧 Tool Call: %s\n", toolCall.Name)
+		}
 		// For demonstration, we'll auto-approve all tool calls
 		// In a real application, you might want to ask for user confirmation
-		return nil
 	}
 
 	return nil
@@ -72,7 +73,7 @@ func main() {
 	fmt.Println("🤖 Agent thinking...")
 
 	ctx := context.Background()
-	if err := conversation.Run(ctx, question, handler); err != nil {
+	if err := conversation.Ask(ctx, question, handler); err != nil {
 		log.Fatalf("Failed to run conversation: %v", err)
 	}
 

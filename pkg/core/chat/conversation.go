@@ -3,6 +3,7 @@ package chat
 import (
 	"context"
 	"fmt"
+	"strings"
 	
 	"github.com/oopslink/agent-go/pkg/commons/errors"
 	"github.com/oopslink/agent-go/pkg/commons/utils"
@@ -26,7 +27,7 @@ type ConversationContext struct {
 }
 
 type AgentResponse struct {
-	Messages  []*llms.Message
+	Message   *llms.Message
 	ToolCalls []*llms.ToolCall
 }
 
@@ -120,8 +121,26 @@ func (c *Conversation) handleAgentEvent(conversationCtx *ConversationContext, ev
 			
 			// Now call the handler with all collected responses
 			if len(c.currentMessages) > 0 || len(c.currentToolCalls) > 0 {
+				// Merge all messages into a single text message
+				var mergedMessage *llms.Message
+				if len(c.currentMessages) > 0 {
+					var textContent strings.Builder
+					for i, msg := range c.currentMessages {
+						if i > 0 {
+							textContent.WriteString("\n")
+						}
+						// Extract text from message parts
+						for _, part := range msg.Parts {
+							if textPart, ok := part.(*llms.TextPart); ok {
+								textContent.WriteString(textPart.Text)
+							}
+						}
+					}
+					mergedMessage = llms.NewAssistantMessage(textContent.String())
+				}
+				
 				agentResponse := &AgentResponse{
-					Messages:  c.currentMessages,
+					Message:   mergedMessage,
 					ToolCalls: c.currentToolCalls,
 				}
 				if err := handler.OnResponse(conversationCtx, agentResponse); err != nil {
