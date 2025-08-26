@@ -20,7 +20,7 @@ func TestNewJsonCodec(t *testing.T) {
 
 func TestJsonCodec_EncodeDecodeAllPartTypes(t *testing.T) {
 	codec := NewJsonCodec()
-	
+
 	// Test with all part types
 	msg := &Message{
 		MessageId: "msg-1",
@@ -149,7 +149,7 @@ func TestJsonCodec_EncodeDecodeAllPartTypes(t *testing.T) {
 
 func TestJsonCodec_BinaryPartWithNilFields(t *testing.T) {
 	codec := NewJsonCodec()
-	
+
 	msg := &Message{
 		MessageId: "msg-1",
 		Creator:   MessageCreator{Role: MessageRoleUser},
@@ -331,17 +331,17 @@ func TestJsonCodec_DecodeBinaryPartVariations(t *testing.T) {
 			}
 		]
 	}`
-	
+
 	msg, err := codec.Decode([]byte(arrayContentJSON))
 	if err != nil {
 		t.Fatalf("Decode failed: %v", err)
 	}
-	
+
 	bp, ok := msg.Parts[0].(*BinaryPart)
 	if !ok {
 		t.Fatal("Expected BinaryPart")
 	}
-	
+
 	expected := []byte("Hello")
 	if !reflect.DeepEqual(bp.Content, expected) {
 		t.Errorf("BinaryPart.Content mismatch: got %v, want %v", bp.Content, expected)
@@ -364,17 +364,17 @@ func TestJsonCodec_DecodeBinaryPartVariations(t *testing.T) {
 			}
 		]
 	}`
-	
+
 	msg, err = codec.Decode([]byte(base64ContentJSON))
 	if err != nil {
 		t.Fatalf("Decode failed: %v", err)
 	}
-	
+
 	bp, ok = msg.Parts[0].(*BinaryPart)
 	if !ok {
 		t.Fatal("Expected BinaryPart")
 	}
-	
+
 	if !reflect.DeepEqual(bp.Content, expected) {
 		t.Errorf("BinaryPart.Content mismatch: got %v, want %v", bp.Content, expected)
 	}

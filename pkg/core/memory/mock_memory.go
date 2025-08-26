@@ -13,6 +13,139 @@ import (
 	llms "github.com/oopslink/agent-go/pkg/support/llms"
 )
 
+// MockMemoryItemCodec is a mock of MemoryItemCodec interface.
+type MockMemoryItemCodec struct {
+	ctrl     *gomock.Controller
+	recorder *MockMemoryItemCodecMockRecorder
+}
+
+// MockMemoryItemCodecMockRecorder is the mock recorder for MockMemoryItemCodec.
+type MockMemoryItemCodecMockRecorder struct {
+	mock *MockMemoryItemCodec
+}
+
+// NewMockMemoryItemCodec creates a new mock instance.
+func NewMockMemoryItemCodec(ctrl *gomock.Controller) *MockMemoryItemCodec {
+	mock := &MockMemoryItemCodec{ctrl: ctrl}
+	mock.recorder = &MockMemoryItemCodecMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockMemoryItemCodec) EXPECT() *MockMemoryItemCodecMockRecorder {
+	return m.recorder
+}
+
+// Decode mocks base method.
+func (m *MockMemoryItemCodec) Decode(data []byte) (MemoryItem, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Decode", data)
+	ret0, _ := ret[0].(MemoryItem)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Decode indicates an expected call of Decode.
+func (mr *MockMemoryItemCodecMockRecorder) Decode(data interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Decode", reflect.TypeOf((*MockMemoryItemCodec)(nil).Decode), data)
+}
+
+// Encode mocks base method.
+func (m *MockMemoryItemCodec) Encode(item MemoryItem) ([]byte, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Encode", item)
+	ret0, _ := ret[0].([]byte)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Encode indicates an expected call of Encode.
+func (mr *MockMemoryItemCodecMockRecorder) Encode(item interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Encode", reflect.TypeOf((*MockMemoryItemCodec)(nil).Encode), item)
+}
+
+// MockMemoryStore is a mock of MemoryStore interface.
+type MockMemoryStore struct {
+	ctrl     *gomock.Controller
+	recorder *MockMemoryStoreMockRecorder
+}
+
+// MockMemoryStoreMockRecorder is the mock recorder for MockMemoryStore.
+type MockMemoryStoreMockRecorder struct {
+	mock *MockMemoryStore
+}
+
+// NewMockMemoryStore creates a new mock instance.
+func NewMockMemoryStore(ctrl *gomock.Controller) *MockMemoryStore {
+	mock := &MockMemoryStore{ctrl: ctrl}
+	mock.recorder = &MockMemoryStoreMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockMemoryStore) EXPECT() *MockMemoryStoreMockRecorder {
+	return m.recorder
+}
+
+// Clear mocks base method.
+func (m *MockMemoryStore) Clear(ctx context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Clear", ctx)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Clear indicates an expected call of Clear.
+func (mr *MockMemoryStoreMockRecorder) Clear(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Clear", reflect.TypeOf((*MockMemoryStore)(nil).Clear), ctx)
+}
+
+// Close mocks base method.
+func (m *MockMemoryStore) Close() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Close")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Close indicates an expected call of Close.
+func (mr *MockMemoryStoreMockRecorder) Close() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockMemoryStore)(nil).Close))
+}
+
+// Load mocks base method.
+func (m *MockMemoryStore) Load(ctx context.Context) ([]MemoryItem, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Load", ctx)
+	ret0, _ := ret[0].([]MemoryItem)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Load indicates an expected call of Load.
+func (mr *MockMemoryStoreMockRecorder) Load(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Load", reflect.TypeOf((*MockMemoryStore)(nil).Load), ctx)
+}
+
+// Store mocks base method.
+func (m *MockMemoryStore) Store(ctx context.Context, item MemoryItem) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Store", ctx, item)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Store indicates an expected call of Store.
+func (mr *MockMemoryStoreMockRecorder) Store(ctx, item interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockMemoryStore)(nil).Store), ctx, item)
+}
+
 // MockMemoryRetriever is a mock of MemoryRetriever interface.
 type MockMemoryRetriever struct {
 	ctrl     *gomock.Controller

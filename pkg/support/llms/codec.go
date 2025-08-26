@@ -11,7 +11,7 @@ import (
 type Codec interface {
 	// Encode converts a Message to its encoded representation
 	Encode(message *Message) ([]byte, error)
-	
+
 	// Decode converts encoded data back to a Message
 	Decode(data []byte) (*Message, error)
 }
@@ -26,11 +26,11 @@ func NewJsonCodec() Codec {
 
 // serializableMessage represents the JSON-serializable version of Message
 type serializableMessage struct {
-	MessageId string                 `json:"message_id"`
-	Creator   MessageCreator         `json:"creator"`
-	Model     ModelId                `json:"model"`
-	Parts     []serializablePart     `json:"parts"`
-	Timestamp time.Time              `json:"timestamp"`
+	MessageId string             `json:"message_id"`
+	Creator   MessageCreator     `json:"creator"`
+	Model     ModelId            `json:"model"`
+	Parts     []serializablePart `json:"parts"`
+	Timestamp time.Time          `json:"timestamp"`
 }
 
 // serializablePart represents the JSON-serializable version of Part
@@ -151,23 +151,23 @@ func (c *JsonCodec) deserializePart(sp serializablePart) (Part, error) {
 
 	case PartTypeBinary:
 		binaryPart := &BinaryPart{}
-		
+
 		if name, exists := content["name"]; exists && name != nil {
 			if nameStr, ok := name.(string); ok {
 				binaryPart.Name = &nameStr
 			}
 		}
-		
+
 		if url, exists := content["url"]; exists && url != nil {
 			if urlStr, ok := url.(string); ok {
 				binaryPart.URL = &urlStr
 			}
 		}
-		
+
 		if mimeType, ok := content["mime_type"].(string); ok {
 			binaryPart.MIMEType = mimeType
 		}
-		
+
 		if contentData, exists := content["content"]; exists && contentData != nil {
 			// JSON marshals []byte as base64 string, but when unmarshaling back to interface{},
 			// it might come back as a string or as an array of numbers
@@ -190,18 +190,18 @@ func (c *JsonCodec) deserializePart(sp serializablePart) (Part, error) {
 				binaryPart.Content = bytes
 			}
 		}
-		
+
 		if contentLength, ok := content["content_length"].(float64); ok {
 			binaryPart.ContentLength = int64(contentLength)
 		}
-		
+
 		return binaryPart, nil
 
 	case PartTypeToolCall:
 		toolCallId, _ := content["tool_call_id"].(string)
 		name, _ := content["name"].(string)
 		arguments, _ := content["arguments"].(map[string]interface{})
-		
+
 		return &ToolCall{
 			ToolCallId: toolCallId,
 			Name:       name,
@@ -212,7 +212,7 @@ func (c *JsonCodec) deserializePart(sp serializablePart) (Part, error) {
 		toolCallId, _ := content["tool_call_id"].(string)
 		name, _ := content["name"].(string)
 		result, _ := content["result"].(map[string]interface{})
-		
+
 		return &ToolCallResult{
 			ToolCallId: toolCallId,
 			Name:       name,

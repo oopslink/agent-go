@@ -7,6 +7,24 @@ import (
 	"github.com/oopslink/agent-go/pkg/support/llms"
 )
 
+// MemoryItemCodec 接口用于序列化和反序列化 MemoryItem
+type MemoryItemCodec interface {
+	Encode(item MemoryItem) ([]byte, error)
+	Decode(data []byte) (MemoryItem, error)
+}
+
+// MemoryStore 接口定义存储后端
+type MemoryStore interface {
+	// 添加一个 MemoryItem 到存储
+	Store(ctx context.Context, item MemoryItem) error
+	// 检索所有 MemoryItem
+	Load(ctx context.Context) ([]MemoryItem, error)
+	// 清空存储
+	Clear(ctx context.Context) error
+	// 关闭存储
+	Close() error
+}
+
 func NewMemoryRetrieveOptions() *MemoryRetrieveOptions {
 	return &MemoryRetrieveOptions{
 		Limit: -1,
