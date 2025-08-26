@@ -3,9 +3,9 @@ package agent
 import (
 	"context"
 	"fmt"
-	"github.com/oopslink/agent-go/pkg/commons/errors"
 	"sync/atomic"
 
+	"github.com/oopslink/agent-go/pkg/commons/errors"
 	"github.com/oopslink/agent-go/pkg/support/eventbus"
 	"github.com/oopslink/agent-go/pkg/support/journal"
 	"github.com/oopslink/agent-go/pkg/support/llms"
