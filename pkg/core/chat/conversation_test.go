@@ -37,12 +37,14 @@ func (m *mockAgent) Run(ctx *agent.RunContext) (chan<- *eventbus.Event, <-chan *
 					}
 					
 					// Send back a message
-					message := llms.NewAssistantMessage("Response to: " + userRequest.Message)
+					messageId := "test-message-id"
+					modelId := llms.ModelId{Provider: "test", ID: "model"}
+					message := llms.NewAssistantMessage(messageId, modelId, "Response to: " + userRequest.Message)
 					outputChan <- agent.NewAgentMessageEvent("test-trace", message)
 					
 					// Send end event
 					outputChan <- agent.NewAgentResponseEndEvent("test-trace", &agent.AgentResponseEnd{
-						FinishReason: llms.FinishReasonStop,
+						FinishReason: llms.FinishReasonNormalEnd,
 					})
 				}
 			}

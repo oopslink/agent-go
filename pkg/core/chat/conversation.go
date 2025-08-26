@@ -136,7 +136,15 @@ func (c *Conversation) handleAgentEvent(conversationCtx *ConversationContext, ev
 							}
 						}
 					}
-					mergedMessage = llms.NewAssistantMessage(textContent.String())
+					
+					// Generate message ID and get model from first message
+					messageId := utils.GenerateUUID()
+					var modelId llms.ModelId
+					if len(c.currentMessages) > 0 {
+						modelId = c.currentMessages[0].Model
+					}
+					
+					mergedMessage = llms.NewAssistantMessage(messageId, modelId, textContent.String())
 				}
 				
 				agentResponse := &AgentResponse{
