@@ -2,33 +2,47 @@ package state
 
 import (
 	"github.com/oopslink/agent-go/pkg/core/agent"
-	"sync"
 )
 
-var _ agent.AgentState = &InMemoryState{}
+var _ agent.AgentState = &SimpleState{}
 
+// NewInMemoryState 创建内存存储的 SimpleState
 func NewInMemoryState() agent.AgentState {
-	return &InMemoryState{
-		data: make(map[string]any),
+	return &SimpleState{
+		store: NewInMemoryStore(),
 	}
 }
 
-type InMemoryState struct {
-	mu   sync.Mutex
-	data map[string]any
+// NewFileState 创建文件存储的 SimpleState
+func NewFileState(dataDir string) (agent.AgentState, error) {
+	store, err := NewFileStore(dataDir)
+	if err != nil {
+		return nil, err
+	}
+	return &SimpleState{
+		store: store,
+	}, nil
 }
 
-func (i *InMemoryState) Get(key string) (any, error) {
-	i.mu.Lock()
-	defer i.mu.Unlock()
-
-	return i.data[key], nil
+// SimpleState 简单状态实现，支持多种存储后端
+type SimpleState struct {
+	store StateStore
 }
 
-func (i *InMemoryState) Put(key string, value any) error {
-	i.mu.Lock()
-	defer i.mu.Unlock()
+func (s *SimpleState) Get(key string) (any, error) {
+	return s.store.Get(key)
+}
 
-	i.data[key] = value
-	return nil
+func (s *SimpleState) Put(key string, value any) error {
+	return s.store.Set(key, value)
+}
+
+// Delete 删除指定key的值
+func (s *SimpleState) Delete(key string) error {
+	return s.store.Delete(key)
+}
+
+// Clear 清空所有状态
+func (s *SimpleState) Clear() error {
+	return s.store.Clear()
 }

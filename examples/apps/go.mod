@@ -3,7 +3,6 @@ module github.com/oopslink/agent-go-apps
 go 1.24.0
 
 require (
-	github.com/modelcontextprotocol/go-sdk v0.2.0
 	github.com/oopslink/agent-go v0.0.0-00010101000000-000000000000
 	github.com/spf13/cobra v1.8.0
 )
@@ -37,6 +36,7 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/milvus-io/milvus-proto/go-api/v2 v2.4.10-0.20240819025435-512e3b98866a // indirect
 	github.com/milvus-io/milvus-sdk-go/v2 v2.4.2 // indirect
+	github.com/modelcontextprotocol/go-sdk v0.2.0 // indirect
 	github.com/openai/openai-go v1.8.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect

@@ -13,7 +13,7 @@ import (
 
 // StartMcpServer initializes and starts the MCP server with the given transport and tools.
 func StartMcpServer(
-	ctx context.Context, name, version string, 
+	ctx context.Context, name, version string,
 	transport mcp.Transport, toolList ...tools.Tool) error {
 	// Create a new MCP server
 	server := mcp.NewServer(&mcp.Implementation{
@@ -91,7 +91,7 @@ func registerToolWithMcpServer(server *mcp.Server, tool tools.Tool) error {
 
 		// Convert tool result to MCP format
 		var content []mcp.Content
-		
+
 		// Try to extract meaningful content from the result
 		if result != nil && result.Result != nil {
 			// Convert the map result to JSON string for display

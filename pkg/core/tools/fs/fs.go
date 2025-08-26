@@ -34,12 +34,12 @@ func NewFileSystemTools(rootPath string) (*FileSystemTools, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to get absolute path for root: %w", err)
 	}
-	
+
 	// Ensure the root directory exists
 	if err := os.MkdirAll(absRoot, 0755); err != nil {
 		return nil, fmt.Errorf("failed to create root directory: %w", err)
 	}
-	
+
 	return &FileSystemTools{
 		rootPath: absRoot,
 	}, nil
@@ -62,30 +62,30 @@ func (fst *FileSystemTools) GetTools() []tools.Tool {
 func (fst *FileSystemTools) validatePath(path string) (string, error) {
 	cleanPath := filepath.Clean(path)
 	absPath := filepath.Join(fst.rootPath, cleanPath)
-	
+
 	// Resolve any symlinks to prevent directory traversal
 	resolvedPath, err := filepath.EvalSymlinks(absPath)
 	if err != nil && !os.IsNotExist(err) {
 		return "", fmt.Errorf("failed to resolve path: %w", err)
 	}
-	
+
 	// If file doesn't exist, use the original absolute path for validation
 	if os.IsNotExist(err) {
 		resolvedPath = absPath
 	}
-	
+
 	// Ensure the resolved path is still within the root
 	if !strings.HasPrefix(resolvedPath, fst.rootPath) {
 		return "", fmt.Errorf("path '%s' is outside the allowed root directory", path)
 	}
-	
+
 	return absPath, nil
 }
 
 // loadDirectoryMeta loads metadata from .meta.yaml file in the directory
 func (fst *FileSystemTools) loadDirectoryMeta(dirPath string) (*DirectoryMeta, error) {
 	metaPath := filepath.Join(dirPath, ".meta.yaml")
-	
+
 	data, err := os.ReadFile(metaPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -93,12 +93,12 @@ func (fst *FileSystemTools) loadDirectoryMeta(dirPath string) (*DirectoryMeta, e
 		}
 		return nil, fmt.Errorf("failed to read metadata file: %w", err)
 	}
-	
+
 	var meta DirectoryMeta
 	if err := yaml.Unmarshal(data, &meta); err != nil {
 		return nil, fmt.Errorf("failed to parse metadata file: %w", err)
 	}
-	
+
 	return &meta, nil
 }
 
@@ -128,9 +128,9 @@ type FileInfo struct {
 }
 
 type DirectoryListing struct {
-	Path     string            `json:"path"`
-	Meta     *DirectoryMeta    `json:"meta,omitempty"`
-	Files    []FileInfo        `json:"files"`
+	Path     string             `json:"path"`
+	Meta     *DirectoryMeta     `json:"meta,omitempty"`
+	Files    []FileInfo         `json:"files"`
 	Children []DirectoryListing `json:"children,omitempty"`
 }
 
@@ -159,17 +159,17 @@ func (t *ListDirectoryTool) Call(ctx context.Context, params *llms.ToolCall) (*l
 	if err := mapToStruct(params.Arguments, &listParams); err != nil {
 		return nil, fmt.Errorf("invalid parameters: %w", err)
 	}
-	
+
 	if listParams.Path == "" {
 		listParams.Path = "."
 	}
-	
+
 	fst := &FileSystemTools{rootPath: t.rootPath}
 	listing, err := t.listDirectory(fst, listParams.Path, listParams.Depth)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &llms.ToolCallResult{
 		ToolCallId: params.ToolCallId,
 		Name:       params.Name,
@@ -185,41 +185,41 @@ func (t *ListDirectoryTool) listDirectory(fst *FileSystemTools, path string, max
 	if err != nil {
 		return nil, err
 	}
-	
+
 	stat, err := os.Stat(absPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to stat directory: %w", err)
 	}
-	
+
 	if !stat.IsDir() {
 		return nil, fmt.Errorf("path '%s' is not a directory", path)
 	}
-	
+
 	listing := &DirectoryListing{
 		Path:  path,
 		Files: make([]FileInfo, 0),
 	}
-	
+
 	// Load metadata if available
 	meta, _ := fst.loadDirectoryMeta(absPath)
 	listing.Meta = meta
-	
+
 	entries, err := os.ReadDir(absPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read directory: %w", err)
 	}
-	
+
 	for _, entry := range entries {
 		// Skip .meta.yaml files in listing
 		if entry.Name() == ".meta.yaml" {
 			continue
 		}
-		
+
 		info, err := entry.Info()
 		if err != nil {
 			continue // Skip entries we can't stat
 		}
-		
+
 		fileInfo := FileInfo{
 			Name:    entry.Name(),
 			Path:    filepath.Join(path, entry.Name()),
@@ -227,16 +227,16 @@ func (t *ListDirectoryTool) listDirectory(fst *FileSystemTools, path string, max
 			Size:    info.Size(),
 			ModTime: info.ModTime().Format(time.RFC3339),
 		}
-		
+
 		listing.Files = append(listing.Files, fileInfo)
-		
+
 		// Recurse into subdirectories if depth allows
 		if entry.IsDir() && (maxDepth < 0 || maxDepth > 0) {
 			nextDepth := maxDepth
 			if maxDepth > 0 {
 				nextDepth = maxDepth - 1
 			}
-			
+
 			childListing, err := t.listDirectory(fst, fileInfo.Path, nextDepth)
 			if err == nil {
 				if listing.Children == nil {
@@ -246,7 +246,7 @@ func (t *ListDirectoryTool) listDirectory(fst *FileSystemTools, path string, max
 			}
 		}
 	}
-	
+
 	return listing, nil
 }
 
@@ -298,19 +298,19 @@ func (t *GetFileStatTool) Call(ctx context.Context, params *llms.ToolCall) (*llm
 	if err := mapToStruct(params.Arguments, &statParams); err != nil {
 		return nil, fmt.Errorf("invalid parameters: %w", err)
 	}
-	
+
 	fst := &FileSystemTools{rootPath: t.rootPath}
 	absPath, err := fst.validatePath(statParams.Path)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	stat, err := os.Stat(absPath)
 	result := FileStatResult{
 		Path:   statParams.Path,
 		Exists: err == nil,
 	}
-	
+
 	if err != nil {
 		if os.IsNotExist(err) {
 			return &llms.ToolCallResult{
@@ -324,13 +324,13 @@ func (t *GetFileStatTool) Call(ctx context.Context, params *llms.ToolCall) (*llm
 		}
 		return nil, fmt.Errorf("failed to stat file: %w", err)
 	}
-	
+
 	result.Name = stat.Name()
 	result.IsDir = stat.IsDir()
 	result.Size = stat.Size()
 	result.Mode = stat.Mode().String()
 	result.ModTime = stat.ModTime().Format(time.RFC3339)
-	
+
 	return &llms.ToolCallResult{
 		ToolCallId: params.ToolCallId,
 		Name:       params.Name,
@@ -379,18 +379,18 @@ func (t *ReadFileTool) Call(ctx context.Context, params *llms.ToolCall) (*llms.T
 	if err := mapToStruct(params.Arguments, &readParams); err != nil {
 		return nil, fmt.Errorf("invalid parameters: %w", err)
 	}
-	
+
 	fst := &FileSystemTools{rootPath: t.rootPath}
 	absPath, err := fst.validatePath(readParams.Path)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	content, err := os.ReadFile(absPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file: %w", err)
 	}
-	
+
 	return &llms.ToolCallResult{
 		ToolCallId: params.ToolCallId,
 		Name:       params.Name,
@@ -451,18 +451,18 @@ func (t *WriteFileTool) Call(ctx context.Context, params *llms.ToolCall) (*llms.
 	if err := mapToStruct(params.Arguments, &writeParams); err != nil {
 		return nil, fmt.Errorf("invalid parameters: %w", err)
 	}
-	
+
 	fst := &FileSystemTools{rootPath: t.rootPath}
 	absPath, err := fst.validatePath(writeParams.Path)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Create parent directories if they don't exist
 	if err := os.MkdirAll(filepath.Dir(absPath), 0755); err != nil {
 		return nil, fmt.Errorf("failed to create parent directories: %w", err)
 	}
-	
+
 	// Parse file mode
 	mode := fs.FileMode(0644)
 	if writeParams.Mode != "" {
@@ -472,11 +472,11 @@ func (t *WriteFileTool) Call(ctx context.Context, params *llms.ToolCall) (*llms.
 		}
 		mode = fs.FileMode(modeInt)
 	}
-	
+
 	if err := os.WriteFile(absPath, []byte(writeParams.Content), mode); err != nil {
 		return nil, fmt.Errorf("failed to write file: %w", err)
 	}
-	
+
 	return &llms.ToolCallResult{
 		ToolCallId: params.ToolCallId,
 		Name:       params.Name,
@@ -531,18 +531,18 @@ func (t *CreateFileTool) Call(ctx context.Context, params *llms.ToolCall) (*llms
 	if err := mapToStruct(params.Arguments, &createParams); err != nil {
 		return nil, fmt.Errorf("invalid parameters: %w", err)
 	}
-	
+
 	fst := &FileSystemTools{rootPath: t.rootPath}
 	absPath, err := fst.validatePath(createParams.Path)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Create parent directories if they don't exist
 	if err := os.MkdirAll(filepath.Dir(absPath), 0755); err != nil {
 		return nil, fmt.Errorf("failed to create parent directories: %w", err)
 	}
-	
+
 	// Parse file mode
 	mode := fs.FileMode(0644)
 	if createParams.Mode != "" {
@@ -552,7 +552,7 @@ func (t *CreateFileTool) Call(ctx context.Context, params *llms.ToolCall) (*llms
 		}
 		mode = fs.FileMode(modeInt)
 	}
-	
+
 	file, err := os.OpenFile(absPath, os.O_CREATE|os.O_EXCL, mode)
 	if err != nil {
 		if os.IsExist(err) {
@@ -561,7 +561,7 @@ func (t *CreateFileTool) Call(ctx context.Context, params *llms.ToolCall) (*llms
 		return nil, fmt.Errorf("failed to create file: %w", err)
 	}
 	file.Close()
-	
+
 	return &llms.ToolCallResult{
 		ToolCallId: params.ToolCallId,
 		Name:       params.Name,
@@ -615,13 +615,13 @@ func (t *DeleteFileTool) Call(ctx context.Context, params *llms.ToolCall) (*llms
 	if err := mapToStruct(params.Arguments, &deleteParams); err != nil {
 		return nil, fmt.Errorf("invalid parameters: %w", err)
 	}
-	
+
 	fst := &FileSystemTools{rootPath: t.rootPath}
 	absPath, err := fst.validatePath(deleteParams.Path)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	stat, err := os.Stat(absPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -637,7 +637,7 @@ func (t *DeleteFileTool) Call(ctx context.Context, params *llms.ToolCall) (*llms
 		}
 		return nil, fmt.Errorf("failed to stat file: %w", err)
 	}
-	
+
 	if stat.IsDir() && !deleteParams.Recursive {
 		// Check if directory is empty
 		entries, err := os.ReadDir(absPath)
@@ -648,18 +648,18 @@ func (t *DeleteFileTool) Call(ctx context.Context, params *llms.ToolCall) (*llms
 			return nil, fmt.Errorf("directory is not empty, use recursive=true to delete")
 		}
 	}
-	
+
 	var deleteErr error
 	if deleteParams.Recursive {
 		deleteErr = os.RemoveAll(absPath)
 	} else {
 		deleteErr = os.Remove(absPath)
 	}
-	
+
 	if deleteErr != nil {
 		return nil, fmt.Errorf("failed to delete: %w", deleteErr)
 	}
-	
+
 	return &llms.ToolCallResult{
 		ToolCallId: params.ToolCallId,
 		Name:       params.Name,
@@ -713,13 +713,13 @@ func (t *CreateDirectoryTool) Call(ctx context.Context, params *llms.ToolCall) (
 	if err := mapToStruct(params.Arguments, &createParams); err != nil {
 		return nil, fmt.Errorf("invalid parameters: %w", err)
 	}
-	
+
 	fst := &FileSystemTools{rootPath: t.rootPath}
 	absPath, err := fst.validatePath(createParams.Path)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Parse directory mode
 	mode := fs.FileMode(0755)
 	if createParams.Mode != "" {
@@ -729,11 +729,11 @@ func (t *CreateDirectoryTool) Call(ctx context.Context, params *llms.ToolCall) (
 		}
 		mode = fs.FileMode(modeInt)
 	}
-	
+
 	if err := os.MkdirAll(absPath, mode); err != nil {
 		return nil, fmt.Errorf("failed to create directory: %w", err)
 	}
-	
+
 	return &llms.ToolCallResult{
 		ToolCallId: params.ToolCallId,
 		Name:       params.Name,
@@ -751,15 +751,15 @@ func mapToStruct(m map[string]any, target interface{}) error {
 	if m == nil {
 		return nil
 	}
-	
+
 	jsonData, err := json.Marshal(m)
 	if err != nil {
 		return fmt.Errorf("failed to marshal map: %w", err)
 	}
-	
+
 	if err := json.Unmarshal(jsonData, target); err != nil {
 		return fmt.Errorf("failed to unmarshal to struct: %w", err)
 	}
-	
+
 	return nil
 }
