@@ -2,7 +2,7 @@ package state
 
 import "sync"
 
-// InMemoryStore 内存存储实现
+// InMemoryStore in-memory storage implementation
 type InMemoryStore struct {
 	mu   sync.RWMutex
 	data map[string]any

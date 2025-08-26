@@ -6,14 +6,14 @@ import (
 
 var _ agent.AgentState = &SimpleState{}
 
-// NewInMemoryState 创建内存存储的 SimpleState
+// NewInMemoryState creates a SimpleState with in-memory storage
 func NewInMemoryState() agent.AgentState {
 	return &SimpleState{
 		store: NewInMemoryStore(),
 	}
 }
 
-// NewFileState 创建文件存储的 SimpleState
+// NewFileState creates a SimpleState with file storage
 func NewFileState(dataDir string) (agent.AgentState, error) {
 	store, err := NewFileStore(dataDir)
 	if err != nil {
@@ -24,7 +24,7 @@ func NewFileState(dataDir string) (agent.AgentState, error) {
 	}, nil
 }
 
-// SimpleState 简单状态实现，支持多种存储后端
+// SimpleState simple state implementation, supports multiple storage backends
 type SimpleState struct {
 	store StateStore
 }
@@ -37,12 +37,12 @@ func (s *SimpleState) Put(key string, value any) error {
 	return s.store.Set(key, value)
 }
 
-// Delete 删除指定key的值
+// Delete deletes the value for the specified key
 func (s *SimpleState) Delete(key string) error {
 	return s.store.Delete(key)
 }
 
-// Clear 清空所有状态
+// Clear clears all state
 func (s *SimpleState) Clear() error {
 	return s.store.Clear()
 }

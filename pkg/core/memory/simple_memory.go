@@ -2,12 +2,12 @@ package memory
 
 import "context"
 
-// NewSimpleMemory 创建一个简单的内存实例，使用内存存储
+// NewSimpleMemory creates a simple memory instance using in-memory storage
 func NewSimpleMemory() Memory {
 	return NewSimpleMemoryWithStore(NewInMemoryStore())
 }
 
-// NewSimpleMemoryWithStore 创建一个使用指定存储的简单内存实例
+// NewSimpleMemoryWithStore creates a simple memory instance using specified storage
 func NewSimpleMemoryWithStore(store MemoryStore) Memory {
 	return &SimpleMemory{
 		store: store,

@@ -8,7 +8,7 @@ import (
 	"sync"
 )
 
-// FileStore 文件系统存储实现
+// FileStore filesystem storage implementation
 type FileStore struct {
 	mu      sync.RWMutex
 	dataDir string
@@ -24,7 +24,7 @@ func NewFileStore(dataDir string) (StateStore, error) {
 }
 
 func (s *FileStore) getFilePath(key string) string {
-	// 替换不安全的文件名字符
+	// Replace unsafe filename characters
 	safeKey := strings.ReplaceAll(key, "/", "_")
 	safeKey = strings.ReplaceAll(safeKey, "\\", "_")
 	safeKey = strings.ReplaceAll(safeKey, ":", "_")
@@ -71,7 +71,7 @@ func (s *FileStore) Delete(key string) error {
 	filePath := s.getFilePath(key)
 	err := os.Remove(filePath)
 	if os.IsNotExist(err) {
-		return nil // 文件不存在视为删除成功
+		return nil // File doesn't exist, treat as successful deletion
 	}
 	return err
 }

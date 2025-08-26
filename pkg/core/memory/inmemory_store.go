@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-// NewInMemoryStore 创建一个内存存储实例
+// NewInMemoryStore creates an in-memory storage instance
 func NewInMemoryStore() MemoryStore {
 	return &InMemoryStore{
 		items: make([]MemoryItem, 0),
@@ -15,13 +15,13 @@ func NewInMemoryStore() MemoryStore {
 
 var _ MemoryStore = &InMemoryStore{}
 
-// InMemoryStore 内存存储实现
+// InMemoryStore in-memory storage implementation
 type InMemoryStore struct {
 	items []MemoryItem
 	mutex *sync.RWMutex
 }
 
-// Store 添加一个 MemoryItem 到存储
+// Store adds a MemoryItem to storage
 func (s *InMemoryStore) Store(ctx context.Context, item MemoryItem) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
@@ -29,18 +29,18 @@ func (s *InMemoryStore) Store(ctx context.Context, item MemoryItem) error {
 	return nil
 }
 
-// Load 检索所有 MemoryItem
+// Load retrieves all MemoryItem
 func (s *InMemoryStore) Load(ctx context.Context) ([]MemoryItem, error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	// 返回副本以避免并发修改
+	// Return a copy to avoid concurrent modification
 	result := make([]MemoryItem, len(s.items))
 	copy(result, s.items)
 	return result, nil
 }
 
-// Clear 清空存储
+// Clear clears storage
 func (s *InMemoryStore) Clear(ctx context.Context) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
@@ -48,8 +48,8 @@ func (s *InMemoryStore) Clear(ctx context.Context) error {
 	return nil
 }
 
-// Close 关闭存储
+// Close closes storage
 func (s *InMemoryStore) Close() error {
-	// 内存存储无需关闭操作
+	// In-memory storage requires no close operation
 	return nil
 }

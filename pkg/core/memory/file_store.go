@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-// NewFileStore 创建一个文件存储实例
+// NewFileStore creates a file storage instance
 func NewFileStore(filePath string, codec MemoryItemCodec) MemoryStore {
 	return &FileStore{
 		filePath: filePath,
@@ -20,14 +20,14 @@ func NewFileStore(filePath string, codec MemoryItemCodec) MemoryStore {
 
 var _ MemoryStore = &FileStore{}
 
-// FileStore 文件存储实现
+// FileStore file storage implementation
 type FileStore struct {
 	filePath string
 	codec    MemoryItemCodec
 	mutex    *sync.RWMutex
 }
 
-// Store 添加一个 MemoryItem 到存储
+// Store adds a MemoryItem to storage
 func (s *FileStore) Store(ctx context.Context, item MemoryItem) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
@@ -45,27 +45,27 @@ func (s *FileStore) Store(ctx context.Context, item MemoryItem) error {
 	return s.saveToFile(items)
 }
 
-// Load 检索所有 MemoryItem
+// Load retrieves all MemoryItem
 func (s *FileStore) Load(ctx context.Context) ([]MemoryItem, error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 	return s.loadFromFile()
 }
 
-// Clear 清空存储
+// Clear clears storage
 func (s *FileStore) Clear(ctx context.Context) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 	return s.saveToFile([]MemoryItem{})
 }
 
-// Close 关闭存储
+// Close closes storage
 func (s *FileStore) Close() error {
-	// 文件存储无需特殊关闭操作
+	// File storage requires no special close operation
 	return nil
 }
 
-// loadFromFile 从文件加载数据
+// loadFromFile loads data from file
 func (s *FileStore) loadFromFile() ([]MemoryItem, error) {
 	// 检查文件是否存在
 	if _, err := os.Stat(s.filePath); os.IsNotExist(err) {
@@ -100,7 +100,7 @@ func (s *FileStore) loadFromFile() ([]MemoryItem, error) {
 	return items, nil
 }
 
-// saveToFile 保存数据到文件
+// saveToFile saves data to file
 func (s *FileStore) saveToFile(items []MemoryItem) error {
 	// 确保目录存在
 	dir := filepath.Dir(s.filePath)

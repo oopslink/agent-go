@@ -7,21 +7,21 @@ import (
 	"github.com/oopslink/agent-go/pkg/support/llms"
 )
 
-// MemoryItemCodec 接口用于序列化和反序列化 MemoryItem
+// MemoryItemCodec interface for serializing and deserializing MemoryItem
 type MemoryItemCodec interface {
 	Encode(item MemoryItem) ([]byte, error)
 	Decode(data []byte) (MemoryItem, error)
 }
 
-// MemoryStore 接口定义存储后端
+// MemoryStore interface defines storage backend
 type MemoryStore interface {
-	// 添加一个 MemoryItem 到存储
+	// Add a MemoryItem to storage
 	Store(ctx context.Context, item MemoryItem) error
-	// 检索所有 MemoryItem
+	// Retrieve all MemoryItem
 	Load(ctx context.Context) ([]MemoryItem, error)
-	// 清空存储
+	// Clear storage
 	Clear(ctx context.Context) error
-	// 关闭存储
+	// Close storage
 	Close() error
 }
 

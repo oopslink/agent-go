@@ -9,23 +9,17 @@ import (
 	"github.com/oopslink/agent-go/pkg/support/llms"
 )
 
-// NewJsonCodec 创建JSON编解码器
+// NewJsonCodec creates a JSON encoder/decoder
 func NewJsonCodec() MemoryItemCodec {
 	return &JsonCodec{}
 }
 
-// NewDefaultCodec 创建JSON编解码器（向后兼容性）
-// Deprecated: 使用 NewJsonCodec 代替
-func NewDefaultCodec() MemoryItemCodec {
-	return NewJsonCodec()
-}
-
 var _ MemoryItemCodec = &JsonCodec{}
 
-// JsonCodec JSON编解码器实现
+// JsonCodec JSON encoder/decoder implementation
 type JsonCodec struct{}
 
-// serializedMemoryItem 用于序列化的内部结构
+// serializedMemoryItem internal structure for serialization
 type serializedMemoryItem struct {
 	ID        MemoryItemId    `json:"id"`
 	Type      string          `json:"type"`
@@ -33,7 +27,7 @@ type serializedMemoryItem struct {
 	Content   json.RawMessage `json:"content"`
 }
 
-// Encode 编码 MemoryItem
+// Encode encodes a MemoryItem
 func (c *JsonCodec) Encode(item MemoryItem) ([]byte, error) {
 	if item == nil {
 		return nil, fmt.Errorf("item is nil")
@@ -43,11 +37,11 @@ func (c *JsonCodec) Encode(item MemoryItem) ([]byte, error) {
 	var contentData []byte
 	var err error
 
-	// 根据具体类型处理
+	// Process based on specific type
 	switch v := item.(type) {
 	case *ChatMessageMemoryItem:
 		itemType = "chat_message"
-		// 使用 llms.JsonCodec 来序列化消息
+		// Use llms.JsonCodec to serialize the message
 		llmsCodec := llms.NewJsonCodec()
 		contentData, err = llmsCodec.Encode(v.message)
 		if err != nil {
@@ -71,7 +65,7 @@ func (c *JsonCodec) Encode(item MemoryItem) ([]byte, error) {
 	return json.Marshal(serialized)
 }
 
-// Decode 解码 MemoryItem
+// Decode decodes a MemoryItem
 func (c *JsonCodec) Decode(data []byte) (MemoryItem, error) {
 	var serialized serializedMemoryItem
 	if err := json.Unmarshal(data, &serialized); err != nil {
@@ -80,7 +74,7 @@ func (c *JsonCodec) Decode(data []byte) (MemoryItem, error) {
 
 	switch serialized.Type {
 	case "chat_message":
-		// 使用 llms.JsonCodec 来反序列化消息
+		// Use llms.JsonCodec to deserialize the message
 		llmsCodec := llms.NewJsonCodec()
 		message, err := llmsCodec.Decode([]byte(serialized.Content))
 		if err != nil {
@@ -94,7 +88,7 @@ func (c *JsonCodec) Decode(data []byte) (MemoryItem, error) {
 		return item, nil
 
 	default:
-		// 对于未知类型，创建一个通用的 MemoryItem
+		// For unknown types, create a generic MemoryItem
 		return &GenericMemoryItem{
 			id:        serialized.ID,
 			content:   serialized.Content,
@@ -103,7 +97,7 @@ func (c *JsonCodec) Decode(data []byte) (MemoryItem, error) {
 	}
 }
 
-// GenericMemoryItem 通用的 MemoryItem 实现，用于处理未知类型
+// GenericMemoryItem generic MemoryItem implementation for handling unknown types
 type GenericMemoryItem struct {
 	id        MemoryItemId
 	content   interface{}
@@ -126,7 +120,7 @@ func (g *GenericMemoryItem) AsMessage() (*llms.Message, bool) {
 	return nil, false
 }
 
-// NewGenericMemoryItem 创建一个通用的 MemoryItem
+// NewGenericMemoryItem creates a generic MemoryItem
 func NewGenericMemoryItem(content interface{}) MemoryItem {
 	return &GenericMemoryItem{
 		id:        MemoryItemId(utils.GenerateUUID()),

@@ -16,9 +16,9 @@ func TestNewJsonCodec(t *testing.T) {
 	assert.IsType(t, &JsonCodec{}, codec)
 }
 
-func TestNewDefaultCodec_BackwardCompatibility(t *testing.T) {
+func TestNewJsonCodec_BackwardCompatibility(t *testing.T) {
 	// 测试向后兼容的函数
-	codec := NewDefaultCodec()
+	codec := NewJsonCodec()
 	assert.NotNil(t, codec)
 	assert.IsType(t, &JsonCodec{}, codec)
 }

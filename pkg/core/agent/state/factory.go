@@ -5,7 +5,7 @@ import (
 	"github.com/oopslink/agent-go/pkg/core/agent"
 )
 
-// StateType 状态存储类型
+// StateType state storage type
 type StateType string
 
 const (
@@ -13,13 +13,13 @@ const (
 	StateTypeFile   StateType = "file"
 )
 
-// StateConfig 状态配置
+// StateConfig state configuration
 type StateConfig struct {
 	Type     StateType
-	FilePath string // 仅对文件类型有效
+	FilePath string // Only valid for file type
 }
 
-// NewState 创建状态存储实例
+// NewState creates a state storage instance
 func NewState(config StateConfig) (agent.AgentState, error) {
 	switch config.Type {
 	case StateTypeMemory:
