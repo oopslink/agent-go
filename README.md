@@ -18,7 +18,7 @@
 
 ## Overview
 
-Agent-Go is a **learning project** designed to understand fundamental concepts and methodologies in the Agent domain. This framework is implemented in Go and serves as a comprehensive exploration of LLM Agent architectures, patterns, and best practices.
+Agent-Go is a framework which is implemented in Go and serves as a comprehensive exploration of LLM Agent architectures, patterns, and best practices.
 
 > **Note**: This is a learning project intended for educational purposes. While it implements many production-ready features, it should be evaluated carefully before use in production environments.
 
